@@ -1,39 +1,37 @@
-# SmartMeter-with-PFC (ESP32 Smart Meter & Automatic Power Factor Corrector (APFC))
+# Smart-Energy-Meter-With-Power-Factor-Correction
+An ESP-IDF 6.1.0 IoT Smart Energy Meter application utilizing the PZEM-004T sensor to measure live AC electrical telemetry. Features dynamic credit token balance enforcement, low-balance load shedding via an automatic relay trip interlock, and an optimized 4-bank Caps for Power Factor Correction (PFC) system and a Local web Dashboard
 
-The design and implementation of a Smart meter that has 'Power Factor' correcting feature to help maximize efficiency in electrical energy usage.
-This project implements an ESP32-based Smart Meter and Automatic Power Factor Corrector (APFC) using the ESP-IDF framework. It monitors electrical parameters via a PZEM sensor over UART, dynamically switches a 4-channel capacitor bank to correct poor power factor, and displays real-time data on an I2C LCD.
+# IoT Smart Energy Meter & Automated PFC Controller
 
-🚀 Features
+A production-grade, asynchronous firmware application built with **ESP-IDF 5.x** for the ESP32 platform. This project implements an advanced household digital prepay energy meter using the **PZEM-004T V3.0** sensor module. It natively tracks live electrical statistics, enforces prepaid credit caps, manages safety interlocks, and features a multi-stage **Binary Combinatorial Power Factor Correction (PFC)** engine managing 4 distinct unequal capacitor banks.
 
-• Real-time Monitoring: Measures Voltage, Current, Active Power, Energy, Frequency, and Power Factor using a PZEM-series sensor.
-• Automated Correction: Features an APFC algorithm that monitors power factor and triggers a 4-channel relay connected to 4 different-sized capacitors to optimize efficiency.
-• Safety Isolation: Utilizes a heavy-duty Power Relay for primary load control and system isolation.
-• Local Visuals: Outputs live metrics to a 16x2 or 20x4 LCD display over the I2C bus.
-• Production Ready: Built purely on ESP-IDF (v5.x recommended) leveraging FreeRTOS tasks for low-latency sampling and control loops.
+## 🚀 Key Features
 
+*   **PZEM-004T Modbus Engine:** Low-overhead UART driver performing asynchronous telemetry collection (Voltage, Current, Active Power, Frequency, Accumulated Wh Energy, and Power Factor).
+*   **Prepaid Credit Logic:** Dynamic deduction engine calculating usage costs in real-time. Automatically isolates line loads via a master high-power relay if balance hits the critical threshold (≤ ₦3.00).
+*   **Combinatorial PFC (Power Factor Correction):** Evaluates all \(2^4 = 16\) possible hardware relay permutation states to accurately balance reactive power (\(\text{VAR}\)) deficits down to individual microfarad (\(\mu\text{F}\)) values without inducing leading line states.
+*   **Embedded Web Dashboard:** Async JSON API server serving a fully responsive HTML5/CSS3/JS user interface embedded directly into the ESP32's flash array. Supports manual power overrides and secure digital credit keypad recharging.
 
-🛠️ Hardware Requirements
+---
 
-• MCU: ESP32 Development Board
-• Sensor: PZEM-004T (v3.0) or equivalent PZEM UART module + CT coil
-• Capacitor Bank: 4x Capacitors (Graduated sizes, e.g., 1µF, 2.2µF, 4.7µF, 10µF depending on your target load)
-• Switching Relays: 4-Channel Relay Module (for capacitor switching)
-• Master Control: High-current Power Relay (for main load connection)
-• Display: LCD 1602 or 2004 with an I2C backpack (PCF8574)
+## 🛠️ System Architecture & Pin Configurations
 
+The firmware allocates isolated FreeRTOS tasks with asymmetric priority bands to ensure line safety structures maintain runtime execution dominance.
 
-🔌 Pin Mapping (Default)
+### Microcontroller Pin Mapping
 
-Component	ESP32 Pin	Description
-PZEM TX	GPIO 16	UART RX2
-PZEM RX	GPIO 17	UART TX2
-I2C SDA (LCD)	GPIO 21	Data Line
-I2C SCL (LCD)	GPIO 22	Clock Line
-Relay Ch 1	GPIO 25	Capacitor 1 Switch
-Relay Ch 2	GPIO 26	Capacitor 2 Switch
-Relay Ch 3	GPIO 27	Capacitor 3 Switch
-Relay Ch 4	GPIO 14	Capacitor 4 Switch
-Main Power Relay	GPIO 12	System Load Isolation
+| Component | ESP32 GPIO | Direction | Purpose |
+| :--- | :---: | :---: | :--- |
+| **PZEM-004T RX** | GPIO 16 | Input | Receives telemetry frames from the sensor |
+| **PZEM-004T TX** | GPIO 17 | Output | Transmits Modbus command frames to the sensor |
+| **Main Power Relay** | GPIO 18 | Output | Active-HIGH line master distribution contactor |
+| **Capacitor Bank 1** | GPIO 19 | Output | Relay drive for Bank 1 (Lowest value) |
+| **Capacitor Bank 2** | GPIO 21 | Output | Relay drive for Bank 2 |
+| **Capacitor Bank 3** | GPIO 22 | Output | Relay drive for Bank 3 |
+| **Capacitor Bank 4** | GPIO 23 | Output | Relay drive for Bank 4 (Highest value) |
+
+---
+
 
 📂 Project Structure
 
@@ -67,33 +65,46 @@ Main Power Relay	GPIO 12	System Load Isolation
             └── apfc_system.h
              # Project documentation
 
+---
 
+## ⚡ Firmware Operations & Task Loops
 
-⚙️ APFC Logic Overview
+1. **`energy_sensor_task` (Priority 5):** Collects UART frames every 1,000ms. If load exists, it subtracts monetary values against `credit_balance` dynamically.
+2. **`power_task` (Priority 5):** The safety interlock gatekeeper. Assesses balance requirements and `power_state` every 100ms. It instantly forces the relay open if funds deplete.
+3. **`power_factor_correction_task` (Priority 4):** Measures complex phase drift ($\text{VAR}$) under loads $\ge 50\text{W}$. Resolves the optimal binary mask combo from a set of four unique non-identical capacitors to restore efficiency toward a $1.00$ target.
 
-The firmware evaluates the target Power Factor (default threshold: 0.95).
-1. Under-Correction: If the power factor drops below the threshold and the load is inductive, the system calculates the missing reactive power (VAR) and switches on the optimal combination of the 4 graduated capacitors.
-2. Over-Correction: If the power factor becomes leading, the system systematically drops capacitor stages to prevent over-voltage conditions.
-3. Safety Override: If critical over-current or severe low power factor faults occur, the Main Power Relay triggers to disconnect the load.
+---
 
-🛠️ Setup & Installation
+## 🔧 Building and Flashing
 
-1. Prerequisites
+### Prerequisites
+1. Install the official [ESP-IDF toolchain](https://espressif.com) (v6.1.0 or later recommended).
+2. Wire up your ESP32 devkit to the PZEM-004T module (Ensure the PZEM is powered with 5V VCC to drive its optical isolation chips, and use a pull-up resistor on the ESP32 TX line if frame timeouts happen).
 
-Ensure you have the ESP-IDF environment installed and configured:
+### Compilation
+Clone the repository and mount the build space environment:
+```bash
+git clone https://github.com/Ra-Ma-Dan/Smart-Energy-Meter-With-Power-Factor-Correction
+cd New_PFC_Energy_Meter
 
-2. Clone and Configure
-```
-git clone https://github.com
-cd esp32-pzem-apfc
+# Set target microcontroller
+idf.py set-target esp32
+
+# Configure Wi-Fi credentials and ports via menuconfig menu
 idf.py menuconfig
-```
-3. Build and Flash
-```
-idf.py build
-idf.py -p [YOUR_PORT] flash monitor
+
+# Build, flash and open serial terminal monitor
+idf.py build flash monitor
 ```
 
-📝 License
+---
 
+## 📈 Frontend API Interface
+The embedded dashboard communicates via the following endpoints:
+*   `GET /data` - Returns standard JSON packet containing voltage, current, power, energy, frequency, power factor, credit, and an active capacitor selection bitmask.
+*   `POST /api/power?state=[1|0]` - Overrides master power relay operation permissions.
+*   `POST /api/recharge?amount=[value]` - Adds tokenized Naira funds to the local device memory stack.
+*   `POST /api/reset` - Commands the PZEM IC register stack to flush accumulated historical Watt-hour counters down to zero.
+
+## 📄 License
 This project is licensed under the MIT License - see the LICENSE file for details.
