@@ -1,0 +1,4 @@
+[wokwi]
+version = 1
+firmware = 'build/PFC_Meter_project.bin'
+elf = 'build/PFC_Meter_project.elf'

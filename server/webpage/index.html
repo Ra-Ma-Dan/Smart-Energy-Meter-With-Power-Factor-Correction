@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESP32 Smart Meter</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 1. AUTHENTICATION OVERLAY -->
+  <div id="auth-screen" class="overlay-screen">
+    <div class="auth-card">
+      <div class="auth-icon">⚡</div>
+      <h2>Smart Meter Access</h2>
+      <p>Enter your credentials to view dashboard</p>
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="input-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" required autocomplete="off">
+        </div>
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" required>
+        </div>
+        <div id="auth-error" class="error-msg">Invalid username or password</div>
+        <button type="submit" class="btn-primary">Authenticate</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. MAIN DASHBOARD CONTENT (Hidden by default until logged in) -->
+  <div id="main-dashboard" class="dashboard-hidden">
+    <div class="header">
+      <h1>⚡ ESP32-Smart Meter</h1>
+      <p>IoT AC Energy Meter with PFC | Live Data (Refreshes Every 2s)</p>
+    </div>
+
+    <!-- 3x3 Metric Grid -->
+    <div class="dashboard-grid">
+      <!-- Row 1 -->
+      <div class="param_container">
+        <p class="param_name">Voltage</p>
+        <p class="param_value" id="val-volt">1</p>
+        <p class="param_unit">Volts (V)</p>
+      </div>
+      <div class="param_container">
+        <p class="param_name">Current</p>
+        <p class="param_value" id="val-curr">1</p>
+        <p class="param_unit">Amps (A)</p>
+      </div>
+      <div class="param_container">
+        <p class="param_name">Active Power</p>
+        <p class="param_value" id="val-ap">1</p>
+        <p class="param_unit">Watts (W)</p>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="param_container">
+        <p class="param_name">Energy</p>
+        <p class="param_value" id="val-energy">0</p>
+        <p class="param_unit">KiloWatt-hour (kWh)</p>
+      </div>
+      <div class="param_container">
+        <p class="param_name">Frequency</p>
+        <p class="param_value" id="val-freq">1</p>
+        <p class="param_unit">Hertz (Hz)</p>
+      </div>
+      <div class="param_container">
+        <p class="param_name">Power Factor</p>
+        <p class="param_value" id="val-pf">0</p>
+        <p class="param_unit">Ratio (0-1)</p>
+      </div>
+
+      <!-- Row 3 -->
+      <div class="param_container">
+        <p class="param_name">Credit Balance</p>
+        <p class="param_value" id="val-credit">0</p>
+        <p class="param_unit">Naira (₦)</p>
+      </div>
+      <div class="param_container">
+        <p class="param_name">Days Remaining</p>
+        <p class="param_value" id="val-days">0</p>
+        <p class="param_unit">Days (d)</p>
+      </div>
+      <div class="param_container">
+        <p class="param_name">Consumed This Week</p>
+        <p class="param_value" id="val-week-energy">0</p>
+        <p class="param_unit">KiloWatt-hour (kWh)</p>
+      </div>
+    </div>
+
+    <!-- Action Buttons Panel -->
+    <div class="btns">
+      <button class="btn-neon" onclick="resetEnergy()">Reset Energy</button>
+      
+      <!-- Power State Toggle Switch Action -->
+      <button id="power-btn" class="btn-tactile power-on" onclick="togglePower()">Power: ON</button>
+      
+      <button class="btn-neon" onclick="openRechargeModal()">Recharge</button>
+    </div>
+  </div>
+
+  <div class="param_container bank-monitor-card">
+    <p class="param_name">Reactive Capacitor Banks</p>
+    <div class="indicators-grid">
+      <div id="cap-ind-0" class="indicator-badge">Cap 1 (5µF)</div>
+      <div id="cap-ind-1" class="indicator-badge">Cap 2 (10µF)</div>
+      <div id="cap-ind-2" class="indicator-badge">Cap 3 (20µF)</div>
+      <div id="cap-ind-3" class="indicator-badge">Cap 4 (40µF)</div>
+    </div>
+  </div>
+
+
+  <!-- 3. RECHARGE OVERLAY KEYPAD MODAL -->
+  <div id="recharge-modal" class="overlay-screen modal-hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Top Up Credit</h3>
+        <button class="close-btn" onclick="closeRechargeModal()">&times;</button>
+      </div>
+      <div class="keypad-display">
+        <span class="currency-symbol">₦</span>
+        <input type="text" id="recharge-amount" value="0" readonly>
+      </div>
+      <div class="keypad-grid">
+        <button onclick="pressKey('1')">1</button>
+        <button onclick="pressKey('2')">2</button>
+        <button onclick="pressKey('3')">3</button>
+        <button onclick="pressKey('4')">4</button>
+        <button onclick="pressKey('5')">5</button>
+        <button onclick="pressKey('6')">6</button>
+        <button onclick="pressKey('7')">7</button>
+        <button onclick="pressKey('8')">8</button>
+        <button onclick="pressKey('9')">9</button>
+        <button class="btn-clear" onclick="pressKey('C')">C</button>
+        <button onclick="pressKey('0')">0</button>
+        <button class="btn-submit-charge" onclick="submitRecharge()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+menu "PFC_PROJECT_CONFIGURATION"
+
+    config TARGET_WIFI_SSID
+        string "my network name"
+        default "WOKWI-GUEST"
+        help 
+            network name for the AP to connect to
+        
+
+    config TARGET_WIFI_PASS
+        string "network password"
+        default ""
+        help 
+            network password for the AP to connect to
+
+    config ESP_WIFI_NETWORK_NAME
+        string "PFC-Energy-Meter"
+        default "WOKWI-GUEST"
+        help 
+            Access point name to connect to for the local webpage load
+
+    config ESP_WIFI_NETWORK_PASS
+        string "123456789"
+        default "WOKWI-GUEST"
+        help 
+            Access point password for 'PFC-Energy-Meter' setup by ESP32 for the local webpage access
+
+    config MAX_AP_CONNECTION
+        int "maximum connection"
+        default 4
+        help 
+            Maximum number of allowable connection on the AP
+
+    config ESP_WIFI_NETWORK_CHANNEL
+        int "maximum connection"
+        default 4
+        help 
+            Access point channel
+
+    config HTTPD_WEB_PORT
+        int "Standard http port"
+        default 80
+        help 
+            Port at which the http server talks
+        
+    # config ESP_WIFI_NETWORK_AUTHMODE
+    #     int "AUTH MODE"
+    #     range 1 6
+    #     default 4
+    #     help 
+    #         Access point channel
+
+    
+endmenu

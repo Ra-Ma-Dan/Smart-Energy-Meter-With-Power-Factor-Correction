@@ -1,0 +1,476 @@
+/* --- Global Dashboard Styling --- */
+body {
+  background-color: #0f131a; 
+  color: #ffffff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* --- Authentication & Modal Shared Overlay Layout --- */
+.overlay-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(10, 13, 18, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: opacity 0.25s ease;
+  padding: 20px; /* Prevents edge-clipping on small mobile screens */
+  box-sizing: border-box;
+}
+
+.dashboard-hidden {
+  display: none !important;
+}
+
+.modal-hidden {
+  display: none !important;
+}
+
+/* --- Sign In Card --- */
+.auth-card {
+  background-color: #161b26;
+  border: 1px solid #242f41;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  box-sizing: border-box;
+}
+
+.auth-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.auth-card h2 {
+  margin: 0 0 5px 0;
+  color: #3b9cfd;
+}
+
+.auth-card p {
+  color: #718096;
+  font-size: 0.9rem;
+  margin: 0 0 25px 0;
+}
+
+.input-group {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #a0aec0;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px;
+  background-color: #0f131a;
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.input-group input:focus {
+  border-color: #3b9cfd;
+}
+
+.error-msg {
+  color: #e53e3e;
+  font-size: 0.85rem;
+  margin-bottom: 15px;
+  display: none;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  background-color: #3b9cfd;
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #2582df;
+}
+
+/* --- Header Styling --- */
+.header {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.header h1 {
+  font-size: 2.2rem;
+  color: #3b9cfd;
+  margin: 0 0 8px 0;
+}
+
+.header p {
+  color: #718096;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* --- Default Layout: 3 Columns for Desktop Moniters --- */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 25px;
+  max-width: 1000px;
+  width: 100%;
+}
+
+/* --- Parameter Container UI Boxes --- */
+.param_container {
+  background-color: #141a24;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #222b3c;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.param_name {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #64748b;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+}
+
+.param_value {
+  font-size: 2.3rem;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+}
+
+.param_unit {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* --- Vivid Color Themes --- */
+#volt { color: #ecc94b; } 
+#curr { color: #38bdf8; } 
+#ap { color: #f87171; } 
+#energy { color: #e2e8f0; } 
+#freq { color: #60a5fa; } 
+#pf { color: #a7f3d0; } 
+#credit { color: #4ade80; } 
+#days { color: #f59e0b; } 
+#week-energy { color: #cbd5e1; }
+
+/* --- Default Layout: Action Button Container --- */
+.btns {
+  margin: 2.5em 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 1000px;
+  width: 100%;
+  gap: 25px;
+  box-sizing: border-box;
+}
+
+.btns button {
+  height: 65px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --- Glassy Gloss Neon Base Button --- */
+.btn-neon {
+  --neon-color: #3b9cfd;
+  background-color: rgba(59, 156, 253, 0.1);
+  border: 1px solid rgba(59, 156, 253, 0.3) !important;
+  color: var(--neon-color);
+  transition: all 0.2s ease;
+}
+
+.btn-neon:hover {
+  background: rgba(59, 156, 253, 0.2);
+  box-shadow: 0 0 15px rgba(59, 156, 253, 0.4);
+}
+
+.btn-neon:active {
+  transform: scale(0.98);
+}
+
+/* --- Power Toggle States (Cut Power Button) --- */
+.btn-tactile {
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.power-on {
+  background: #10b981; 
+  box-shadow: 0 4px 0 #047857;
+}
+.power-on:hover {
+  background: #059669;
+}
+
+.power-off {
+  background: #ef4444; 
+  box-shadow: 0 4px 0 #b91c1c;
+}
+.power-off:hover {
+  background: #dc2626;
+}
+
+.btn-tactile:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 transparent;
+}
+
+/* --- Overlay Recharge Keypad Modal UI --- */
+.modal-card {
+  background: #161b26;
+  border: 1px solid #242f41;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 320px;
+  padding: 24px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+  box-sizing: border-box;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #3b9cfd;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.keypad-display {
+  background: #0f131a;
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.currency-symbol {
+  font-size: 1.5rem;
+  color: #4ade80;
+  margin-right: 8px;
+}
+
+.keypad-display input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: right;
+  outline: none;
+}
+
+.keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.keypad-grid button {
+  background: #222b3c;
+  border: none;
+  color: white;
+  height: 55px;
+  border-radius: 8px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.keypad-grid button:hover {
+  background: #2e3b52;
+}
+
+.keypad-grid .btn-clear {
+  background: #3f4e68;
+  color: #f87171;
+}
+
+.keypad-grid .btn-submit-charge {
+  background: #4ade80;
+  color: #0f131a;
+}
+.keypad-grid .btn-submit-charge:hover {
+  background: #22c55e;
+}
+
+
+
+.bank-monitor-card {
+  grid-column: span 3; /* Stretch across the dashboard layout */
+}
+.indicators-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  width: 100%;
+  margin-top: 10px;
+}
+.indicator-badge {
+  background: #1c2333;
+  border: 1px solid #2d3748;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #64748b;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+/* Vivid dynamic glow styling states for active lines */
+.indicator-active {
+  background: rgba(0, 229, 255, 0.15) !important;
+  border-color: #00e5ff !important;
+  color: #00e5ff !important;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.3);
+}
+@media (max-width: 600px) {
+  .bank-monitor-card { grid-column: span 1; }
+  .indicators-grid { grid-template-columns: 1fr; }
+}
+
+
+/* ==========================================================================
+   DYNAMIC BREAKPOINTS FOR MOBILE & TABLET LAYOUTS
+   ========================================================================== */
+
+/* 📱 BREAKPOINT 1: Medium Devices (Tablets, iPads, Smaller Laptops up to 900px wide) */
+@media (max-width: 900px) {
+  body {
+    padding: 20px;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr); /* Snaps neatly to a balanced 2-column layout */
+    gap: 20px;
+  }
+  
+  .btns {
+    gap: 20px;
+    margin: 2em 0;
+  }
+  
+  .header h1 {
+    font-size: 1.9rem;
+  }
+}
+
+/* 📱 BREAKPOINT 2: Small Devices (Mobile Phones up to 600px wide) */
+@media (max-width: 600px) {
+  body {
+    padding: 15px;
+  }
+
+  .header {
+    margin-bottom: 25px;
+  }
+
+  .header h1 {
+    font-size: 1.6rem;
+  }
+
+  .header p {
+    font-size: 0.85rem;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr; /* Stacks data vertically down the mobile viewport */
+    gap: 15px;
+  }
+
+  .param_container {
+    padding: 20px;
+  }
+
+  .param_value {
+    font-size: 2rem; /* Shrinks the numbers slightly so they don't break boundaries */
+  }
+
+  /* Rearranges the active control panel stack on mobile touch-points */
+  .btns {
+    grid-template-columns: 1fr; /* Stack buttons vertically for thumb accessibility */
+    gap: 12px;
+    margin: 1.5em 0;
+  }
+
+  .btns button {
+    height: 55px;
+    font-size: 15px;
+  }
+
+  /* Shrinks authentication form card slightly for small mobile screens */
+  .auth-card {
+    padding: 25px 20px;
+  }
+}
+
+/* 📱 BREAKPOINT 3: Micro Devices (Very narrow legacy or budget screens under 360px wide) */
+@media (max-width: 360px) {
+  .param_value {
+    font-size: 1.7rem;
+  }
+  .keypad-grid button {
+    height: 48px;
+    font-size: 1.1rem;
+  }
+}
