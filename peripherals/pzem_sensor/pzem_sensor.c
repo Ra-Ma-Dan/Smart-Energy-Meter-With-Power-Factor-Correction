@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "pzem_sensor.h"
 #include "esp_log.h"
 #include "my_gpio.h"
@@ -139,4 +141,26 @@ esp_err_t pzem_reset_energy() {
 
     ESP_LOGE(TAG, "Failed to reset energy counters.");
     return ESP_FAIL;
+}
+
+
+float generate_random_num(float start, float end) {
+    // 1. Get a random fraction between 0.0 and 1.0
+    float scale = (float)rand() / (float)RAND_MAX; 
+
+    // 2. Scale it to fit your specific [start, end] range
+    return start + (scale * (end - start));
+}
+
+esp_err_t random_pzem_reading(pzem_data_t data){
+
+    data = {
+        .energy = generate_random_num(10, 30),
+        .current = generate_random_num(0, 30),
+        .frequency = generate_random_num(48.0, 52.0),
+        .power = generate_random_num(20.1, 500),
+        .voltage = generate_random_num(220.0, 245.0),
+        .power_factor = generate_random_num(0.0, 1.0),
+    };
+    return ESP_OK;
 }

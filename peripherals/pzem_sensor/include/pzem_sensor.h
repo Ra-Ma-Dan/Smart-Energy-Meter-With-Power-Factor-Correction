@@ -54,5 +54,5 @@ esp_err_t pzem_read_data(pzem_data_t *data);
  */
 esp_err_t pzem_reset_energy();
 
-
+esp_err_t random_pzem_reading();
 #endif // PZEM004T_H

@@ -20,7 +20,7 @@
 
 //i2c pins defination
 #define I2C_SDA_PIN         GPIO_NUM_21
-#define I2C_SCL_PIN         GPIO_NUM_22
+#define I2C_SCL_PIN         GPIO_NUM_20
 
 //UART pins configurations
 #define UART_RX_PIN         GPIO_NUM_18
@@ -39,18 +39,6 @@ static const gpio_num_t cap_bank_gpios[NUM_CAP_BANKS] = {
     CAPACITOR_4_RELAY
 };
 
-// Precise reactive capacity values (VAR) calculated for each of your unique physical capacitors
-static const float bank_var_values[NUM_CAP_BANKS] = {
-    76.0f,   // Bank 1 value (e.g. 5uF)
-    152.0f,  // Bank 2 value (e.g. 10uF)
-    304.0f,  // Bank 3 value (e.g. 20uF)
-    608.0f   // Bank 4 value (e.g. 40uF)
-};
-
-
-void (* gpio_callback_t) void;
 void my_gpio_init(void);
-
-xTaskCreate()
 
 #endif

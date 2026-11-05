@@ -1,6 +1,7 @@
 #ifndef MY_I2C_H
 #define MY_I2C_H
 
+#include "driver/i2c_master.h"
 
 #define CLK_SPEED_HZ    100000 //High speed mode
 #define I2C_PORT_NUM    -1

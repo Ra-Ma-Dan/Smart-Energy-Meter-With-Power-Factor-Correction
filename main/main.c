@@ -9,6 +9,7 @@
 #include "my_i2c.h"
 #include "my_wifi.h"
 #include "meter_http_server.h"
+#include "pfc_task.h"
 
 static const char *TAG = "App Main";
 
@@ -17,7 +18,9 @@ void energy_sensor_task(void *pvParameters) {
     pzem_data_t readings;
 
     while (1) {
-        if (pzem_read_data(&pzem_cfg, &readings) == ESP_OK) {
+        //if (pzem_read_data(&readings) == ESP_OK) {
+        if (random_pzem_reading(&readings) == ESP_OK) {
+
             live_pfc_data = readings;
             
             // Optional: Calculate energy metrics consumption drop rates
@@ -82,7 +85,7 @@ void power_factor_correction_task(void *pvParameters) {
     }
 }
 
-void recharge__task(){
+void recharge_task(){
     
 }
 
@@ -97,7 +100,7 @@ void app_main(void)
         ESP_LOGI(TAG, "Failed to initialized PZEM sensor");
     }
 
-    xTaskCreatePinnedToCore(pfc_task, "Power_Factor_Correction_Task", 4096, NULL, 5, NULL, 1);
+    xTaskCreatePinnedToCore(power_factor_correction_task, "Power_Factor_Correction", 4096, NULL, 5, NULL, 1);
     xTaskCreatePinnedToCore(energy_sensor_task, "Energy_Sensor_Task", 4096, NULL, 5, NULL, 1);
     xTaskCreatePinnedToCore(power_task, "Powering_ON_OFF_Task", 4096, NULL, 5, NULL, 1);
     xTaskCreatePinnedToCore(recharge_task, "Recharging_task", 4096, NULL, 4, NULL, 1);
