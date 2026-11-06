@@ -2,7 +2,7 @@ menu "PFC_PROJECT_CONFIGURATION"
 
     config TARGET_WIFI_SSID
         string "my network name"
-        default "WOKWI-GUEST"
+        default "Wokwi-GUEST"
         help 
             network name for the AP to connect to
         

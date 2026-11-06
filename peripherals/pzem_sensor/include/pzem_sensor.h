@@ -4,9 +4,12 @@
 #include "driver/uart.h"
 
 #define UART_DATA_SPEED 9600
-#define UART_PORT       UART_PORT_0
-#define PMEZ_FRAME_SIZE 32  // Standard PM sensor frame length
+#define UART_PORT       UART_NUM_0
+#define PMEZ_FRAME_SIZE 128  // Standard PM sensor frame length is 32
 #define PMEZ_DEV_ADDR   0x01
+
+
+extern float simulated_energy_kwh;
 
 /**
  * @brief Structure to hold parsed sensor readings from the PZEM-004T
@@ -20,16 +23,6 @@ typedef struct {
     float power_factor;  /**< Power factor (0.00 to 1.00) */
     uint16_t alarms;     /**< Alarm status (0xFFFF if active) */
 } pzem_data_t;
-
-// /**
-//  * @brief Configuration struct for the PZEM-004T sensor
-//  */
-// typedef struct {
-//     uart_port_t uart_port;     /**< UART port to use (e.g., UART_NUM_1) */
-//     int tx_pin;                /**< GPIO number for ESP TX -> PZEM RX */
-//     int rx_pin;                /**< GPIO number for ESP RX -> PZEM TX */
-//     uint8_t addr;              /**< Modbus address (Default is usually 0x01) */
-// } pzem_config_t;
 
 
 /**
@@ -45,6 +38,8 @@ esp_err_t pzem_init();
  * @param data Pointer to the struct where results will be stored
  * @return esp_err_t ESP_OK on success, ESP_FAIL on CRC/parsing failure, or ESP_ERR_TIMEOUT
  */
+
+
 esp_err_t pzem_read_data(pzem_data_t *data);
 
 /**
@@ -54,5 +49,7 @@ esp_err_t pzem_read_data(pzem_data_t *data);
  */
 esp_err_t pzem_reset_energy();
 
-esp_err_t random_pzem_reading();
-#endif // PZEM004T_H
+esp_err_t random_pzem_reading(pzem_data_t *data);
+
+
+#endif

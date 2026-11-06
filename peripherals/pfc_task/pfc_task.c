@@ -5,6 +5,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "pfc_task.h"
+#include "meter_http_server.h"
 #include "my_gpio.h"
 
 void power_factor_correction_task(void *pvParameters) {

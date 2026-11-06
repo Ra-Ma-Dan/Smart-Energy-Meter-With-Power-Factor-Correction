@@ -3,8 +3,9 @@
 #include "freertos/task.h"
 #include "esp_log.h"
 #include "esp_err.h"
+#include "freertos/queue.h"
 
-#include "pmez_sensor.h"
+#include "pzem_sensor.h"
 #include "my_gpio.h"
 #include "my_i2c.h"
 #include "my_wifi.h"
@@ -12,8 +13,9 @@
 #include "pfc_task.h"
 
 static const char *TAG = "App Main";
-
-
+QueueHandle_t recharge_queue = NULL;
+pzem_data_t live_pfc_data;
+//1 Read Parameters form Sensor
 void energy_sensor_task(void *pvParameters) {
     pzem_data_t readings;
 
@@ -38,7 +40,7 @@ void energy_sensor_task(void *pvParameters) {
         } else {
             ESP_LOGW(TAG, "Telemetry link dropped. Re-checking device bus...");
         }
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        vTaskDelay(pdMS_TO_TICKS(3000)); //3 secs between readings. to be changed for real PZEM sensor
     }
 }
 
@@ -78,17 +80,34 @@ void low_credit_task(void *pvParameters) {
     }
 }
 
-void power_factor_correction_task(void *pvParameters) {
+
+//4 The recharge task that processes the credits
+void recharge_task(void *pvParameters) {
+    recharge_queue = xQueueCreate(5, sizeof(float));
+    if (recharge_queue == NULL) {
+        ESP_LOGE(TAG, "Failed to initialize standard FreeRTOS queue tracking system");
+        return;
+    }
+    float received_topup = 0.0f;
+    ESP_LOGI(TAG, "Recharge background task handling initialized.");
+
     while (1) {
-        // Inspect live_pfc_data.power_factor and switch relay capacitor banks if PF falls below 0.85
-        vTaskDelay(pdMS_TO_TICKS(2000));
+        // Block indefinitely (portMAX_DELAY) until a recharge arrives from the HTTP thread
+        if (xQueueReceive(recharge_queue, &received_topup, portMAX_DELAY) == pdPASS) {
+            
+            // 1. Thread-safe application of the balance adjustment
+            credit_balance += received_topup;
+            ESP_LOGI(TAG, "[TASK] Balance credited successfully. New Total: ₦%.2f", credit_balance);
+            
+            // 2. Clear critical load-shedding interlocks if necessary
+            // As seen in your frontend JS script, if credit drops <= 3.0, the load drops.
+            // If this recharge brings them back into positive standing, activate the relay.
+
+            // 3. (Optional but Recommended) Commit to flash memory here
+            // save_balance_to_nvs(credit_balance);
+        }
     }
 }
-
-void recharge_task(){
-    
-}
-
 
 
 void app_main(void)
@@ -96,9 +115,9 @@ void app_main(void)
     my_wifi_init();
     my_i2c_init();
     my_gpio_init();
-    if (pzem_init() != ESP_OK){
-        ESP_LOGI(TAG, "Failed to initialized PZEM sensor");
-    }
+    // if (pzem_init() != ESP_OK){
+    //     ESP_LOGI(TAG, "Failed to initialized PZEM sensor");
+    // }
 
     xTaskCreatePinnedToCore(power_factor_correction_task, "Power_Factor_Correction", 4096, NULL, 5, NULL, 1);
     xTaskCreatePinnedToCore(energy_sensor_task, "Energy_Sensor_Task", 4096, NULL, 5, NULL, 1);

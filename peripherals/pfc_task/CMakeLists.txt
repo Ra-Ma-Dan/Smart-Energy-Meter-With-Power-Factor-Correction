@@ -1,3 +1,3 @@
 idf_component_register(SRCS "pfc_task.c"
                     INCLUDE_DIRS "include"
-                    REQUIRES my_gpio )
+                    REQUIRES my_gpio meter_http_server)

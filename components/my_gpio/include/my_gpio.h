@@ -30,7 +30,7 @@
 #define MIN_LOAD_POWER 50.0f   // Minimum load in Watts before correction activates
 #define PF_TARGET_MIN  0.85f   // Lower limit: Engage bank if PF falls below this
 
-volatile uint8_t active_capacitor_mask = 0; // Bit 0 = Bank 1, Bit 1 = Bank 2, etc.
+extern uint8_t active_capacitor_mask; // Bit 0 = Bank 1, Bit 1 = Bank 2, etc.
 
 static const gpio_num_t cap_bank_gpios[NUM_CAP_BANKS] = {
     CAPACITOR_1_RELAY,

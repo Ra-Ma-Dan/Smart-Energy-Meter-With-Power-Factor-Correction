@@ -183,15 +183,15 @@ body {
 }
 
 /* --- Vivid Color Themes --- */
-#volt { color: #ecc94b; } 
-#curr { color: #38bdf8; } 
-#ap { color: #f87171; } 
-#energy { color: #e2e8f0; } 
-#freq { color: #60a5fa; } 
-#pf { color: #a7f3d0; } 
-#credit { color: #4ade80; } 
-#days { color: #f59e0b; } 
-#week-energy { color: #cbd5e1; }
+#val-volt { color: #ecc94b; } 
+#val-curr { color: #38bdf8; } 
+#val-ap { color: #f87171; } 
+#val-energy { color: #e2e8f0; } 
+#val-freq { color: #60a5fa; } 
+#val-pf { color: #a7f3d0; } 
+#val-credit { color: #4ade80; } 
+#val-days { color: #f59e0b; } 
+#val-week-energy { color: #00e5ff; }
 
 /* --- Default Layout: Action Button Container --- */
 .btns {

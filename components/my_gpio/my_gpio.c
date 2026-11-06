@@ -4,7 +4,7 @@
 #include "freertos/FreeRTOS.h"
 
 static const char *TAG = "GPIO DRIVER";
-
+uint8_t active_capacitor_mask = 0;
 
 void my_gpio_init(void){
     gpio_config_t pins_cfg = {

@@ -144,13 +144,13 @@ function fetchPfcMetrics() {
         })
         .then(data => {
             // 1. Target and update basic telemetry items
-            document.getElementById('volt').innerText = data.voltage.toFixed(1) + " V";
-            document.getElementById('curr').innerText = data.current.toFixed(3) + " A";
-            document.getElementById('ap').innerText   = data.power.toFixed(1) + " W";
-            document.getElementById('energy').innerText = data.energy.toFixed(3) + " kWh";
-            document.getElementById('freq').innerText   = data.frequency.toFixed(1) + " Hz";
-            document.getElementById('pf').innerText     = data.pf.toFixed(2);
-            document.getElementById('credit').innerText = "₦" + data.credit.toFixed(2);
+            document.getElementById('val-volt').innerText = data.voltage.toFixed(1) + " V";
+            document.getElementById('val-curr').innerText = data.current.toFixed(3) + " A";
+            document.getElementById('val-ap').innerText   = data.power.toFixed(1) + " W";
+            document.getElementById('val-energy').innerText = data.energy.toFixed(3) + " kWh";
+            document.getElementById('val-freq').innerText   = data.frequency.toFixed(1) + " Hz";
+            document.getElementById('val-pf').innerText     = data.pf.toFixed(2);
+            document.getElementById('val-credit').innerText = "₦" + data.credit.toFixed(2);
             
             // 2. Efficiency coloration styling matching low power factors
             const pfBadge = document.getElementById('pf');
@@ -183,7 +183,7 @@ function fetchPfcMetrics() {
             }
 
             // 4. Update the 4 Unique Capacitor Relay State Badges via Bitmask Parsing
-            const currentMask = data.caps; // e.g. 5 means Bank 1 (bit 0) and Bank 3 (bit 2) are active
+            const currentMask = data.cap_banks; // e.g. 5 means Bank 1 (bit 0) and Bank 3 (bit 2) are active
 
             for (let i = 0; i < 4; i++) {
                 const badge = document.getElementById(`cap-ind-${i}`);

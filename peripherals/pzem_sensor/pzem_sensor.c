@@ -8,6 +8,9 @@
 
 static const char *TAG = "PZEM_SENSOR";
 
+
+float simulated_energy_kwh = 0.0f;
+
 esp_err_t pzem_init() {
     uart_config_t uart_config = {
         .baud_rate = UART_DATA_SPEED,
@@ -152,15 +155,33 @@ float generate_random_num(float start, float end) {
     return start + (scale * (end - start));
 }
 
-esp_err_t random_pzem_reading(pzem_data_t data){
 
-    data = {
-        .energy = generate_random_num(10, 30),
-        .current = generate_random_num(0, 30),
-        .frequency = generate_random_num(48.0, 52.0),
-        .power = generate_random_num(20.1, 500),
-        .voltage = generate_random_num(220.0, 245.0),
-        .power_factor = generate_random_num(0.0, 1.0),
-    };
+
+esp_err_t random_pzem_reading(pzem_data_t *data) {
+    if (data == NULL) return ESP_ERR_INVALID_ARG;
+
+    // 1. Generate core physical values
+    float volt = generate_random_num(220.0f, 245.0f);
+    float curr = generate_random_num(0.0f, 30.0f);
+    float pf   = generate_random_num(0.6f, 0.98f); // Real world loads rarely hit absolute 0.0
+    float freq = generate_random_num(49.5f, 50.5f); // Assuming standard 50Hz grid
+
+    // 2. Calculate physically consistent Active Power (Watts)
+    float active_power = volt * curr * pf;
+
+    // 3. Simulate Active Energy Accumulation (Wh or kWh depending on your struct)
+    // Assuming this function runs roughly once every few seconds, we slowly tick up energy
+    float simulated_time_hours = 2.0f / 3600.0f; // Simulating 2 seconds passing
+    float generated_wh = active_power * simulated_time_hours;
+    simulated_energy_kwh += (generated_wh / 1000.0f); // Convert Wh to kWh
+
+    // 4. Assign to struct
+    data->voltage = volt;
+    data->current = curr;
+    data->power_factor = pf;
+    data->frequency = freq;
+    data->power = active_power; 
+    data->energy = simulated_energy_kwh; 
+
     return ESP_OK;
 }
