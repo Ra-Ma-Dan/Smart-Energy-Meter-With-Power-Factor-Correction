@@ -29,6 +29,19 @@ void my_gpio_init(void){
     for (int i = 0; i < NUM_CAP_BANKS; i++) {
         gpio_set_level(cap_bank_gpios[i], 0); // Start completely disengaged
     }
+
+    gpio_config_t lcd_ctr_pin = {
+        .pin_bit_mask = (1ULL << LCD_CNT_BTN),
+        .mode         = GPIO_MODE_INPUT,
+        .pull_up_en   = GPIO_PULLUP_ENABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type    = GPIO_INTR_DISABLE
+    };
+    res = gpio_config(&lcd_ctr_pin);
+    if (res != ESP_OK){
+        ESP_LOGE(TAG, "Configuration failed: %s", esp_err_to_name(res));
+        abort();
+    }
     ESP_LOGI(TAG, "Initialization Succeded");
 }
 

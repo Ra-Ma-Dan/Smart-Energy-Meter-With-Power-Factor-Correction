@@ -8,6 +8,8 @@
 #include "esp_event.h"
 #include "esp_mac.h"
 
+#include "meter_http_server.h"
+
 static const char *STA_TAG = "WiFi_STA";
 static const char *AP_TAG = "SoftAP";
 
@@ -32,8 +34,10 @@ static void wifi_event_handler_fxn(void *args, esp_event_base_t event_base, int3
         esp_wifi_connect();
     } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED){
         if(num_tries < MAX_RETRY){
+            ESP_LOGI(STA_TAG, "Disconnected. Retrying... (%d/%d)", num_tries, MAX_RETRY);
+            
+            vTaskDelay(pdMS_TO_TICKS(500));
             esp_wifi_connect();
-            ESP_LOGI(STA_TAG, "Disconnected. Retrying...");
             num_tries++;
         } else {
             ESP_LOGI(STA_TAG, "Failed to reconnect");
@@ -46,6 +50,9 @@ static void wifi_event_handler_fxn(void *args, esp_event_base_t event_base, int3
         // FIXED: Removed invalid event->aid reference which does not exist in IP_EVENT
         ESP_LOGI(STA_TAG, "Connected. IP: " IPSTR, IP2STR(&event->ip_info.ip));
         xEventGroupSetBits(wifi_enent_handle, WIFI_CONNECTED_BIT);
+
+        start_webserver();
+        ESP_LOGI(STA_TAG, "Web Server started at port: %d", CONFIG_HTTPD_WEB_PORT);
     }
 }
 

@@ -3,7 +3,7 @@
 #include "esp_err.h"
 #include "esp_log.h"
 #include "my_gpio.h"
-
+#include "lcd_display.h"
 
 static const char *TAG = "MY I2C";
 
@@ -25,7 +25,7 @@ void my_i2c_init(){
 
     i2c_device_config_t dev_cfg = {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-        .device_address = PMEZ_ADDRESS,
+        .device_address = LCD_ADDR,
         .scl_speed_hz = CLK_SPEED_HZ,
     };
     ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_cfg, &dev_handle));
@@ -33,7 +33,7 @@ void my_i2c_init(){
     ESP_LOGI(TAG, "I2C Initialized Successful");
 }
 
-void i2c_send(const int8_t *data, size_t data_len, int timeout){
+void i2c_send(const uint8_t *data, size_t data_len, int timeout){
     // Explicitly casting 'data' from (const int8_t*) to (const uint8_t*) to fix signedness
     esp_err_t res = i2c_master_transmit(dev_handle, (const uint8_t *)data, data_len, timeout);
     if(res != ESP_OK){
@@ -47,7 +47,7 @@ void i2c_send_recieve(const int8_t *data, size_t data_len, int8_t *buffer, size_
     // 2. Cast 'data' to (const uint8_t*) and 'buffer' to (uint8_t*) below
     esp_err_t res = i2c_master_transmit_receive(dev_handle, (const uint8_t *)data, data_len, (uint8_t *)buffer, buff_len, timeout);
     if(res != ESP_OK){
-        ESP_LOGI(TAG, "Failed to transmit");
+        ESP_LOGI(TAG, "Failed to transmit_recieve");
         abort();
     }
 }

@@ -21,6 +21,7 @@
 //i2c pins defination
 #define I2C_SDA_PIN         GPIO_NUM_21
 #define I2C_SCL_PIN         GPIO_NUM_20
+#define LCD_CNT_BTN         GPIO_NUM_42       // BTN that wakes the LCD
 
 //UART pins configurations
 #define UART_RX_PIN         GPIO_NUM_18

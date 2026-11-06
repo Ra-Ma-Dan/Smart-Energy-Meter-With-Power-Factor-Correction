@@ -11,6 +11,7 @@
 #include "my_wifi.h"
 #include "meter_http_server.h"
 #include "pfc_task.h"
+#include "lcd_display.h"
 
 static const char *TAG = "App Main";
 QueueHandle_t recharge_queue = NULL;
@@ -115,6 +116,7 @@ void app_main(void)
     my_wifi_init();
     my_i2c_init();
     my_gpio_init();
+    
     // if (pzem_init() != ESP_OK){
     //     ESP_LOGI(TAG, "Failed to initialized PZEM sensor");
     // }
@@ -123,8 +125,9 @@ void app_main(void)
     xTaskCreatePinnedToCore(energy_sensor_task, "Energy_Sensor_Task", 4096, NULL, 5, NULL, 1);
     xTaskCreatePinnedToCore(power_task, "Powering_ON_OFF_Task", 4096, NULL, 5, NULL, 1);
     xTaskCreatePinnedToCore(recharge_task, "Recharging_task", 4096, NULL, 4, NULL, 1);
-    xTaskCreatePinnedToCore(low_credit_task, "Recharging_task", 2048, NULL, 4, NULL, 0);
-    
+    xTaskCreatePinnedToCore(low_credit_task, "Low Credit Task", 2048, NULL, 4, NULL, 0);
+    //xTaskCreatePinnedToCore(lcd_display_task, "LCD_DISPLAY_TASK", 4096, NULL, 6, NULL, 0);
+     
     while(1){
 
         vTaskDelay(pdMS_TO_TICKS(1000));
