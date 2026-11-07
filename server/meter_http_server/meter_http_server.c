@@ -14,7 +14,7 @@ static const char *TAG = "HTTP_SERVER";
 
 
 bool power_state = true;
-float credit_balance = 500.0f;
+float credit_balance = 50.0f;
 
 // 1. Embed the binary text files out of flash memory strings
 extern const uint8_t index_html_start[] asm("_binary_index_html_start");
@@ -117,7 +117,6 @@ static esp_err_t recharge_post_handler(httpd_req_t *request)
 static esp_err_t data_get_handler(httpd_req_t *request)
  {
     char json_string[256];
-    
     // Convert current float parameters into an array format for JavaScript parsing
     snprintf(json_string, sizeof(json_string),
              "{\"voltage\":%.1f,\"current\":%.3f,\"power\":%.1f,\"energy\":%.3f,\"frequency\":%.1f,\"pf\":%.2f,\"credit\":%.2f,\"cap_banks\":%d}",
@@ -125,13 +124,6 @@ static esp_err_t data_get_handler(httpd_req_t *request)
              live_pfc_data.power, (live_pfc_data.energy / 1000.0f), // Convert Wh to kWh
              live_pfc_data.frequency, live_pfc_data.power_factor,
              credit_balance, active_capacitor_mask);
-
-    // snprintf(json_string, sizeof(json_string),
-    //         "{\"voltage\":%.1f,\"current\":%.3f,\"power\":%.1f,\"energy\":%.3f,\"frequency\":%.1f,\"pf\":%.2f,\"credit\":%.2f}",
-    //         live_pfc_data.voltage, live_pfc_data.current, 
-    //         live_pfc_data.power, (live_pfc_data.energy / 1000.0f), 
-    //         live_pfc_data.frequency, live_pfc_data.power_factor,
-    //         credit_balance);
 
 
     httpd_resp_set_type(request, "application/json");
@@ -203,7 +195,7 @@ static esp_err_t wifi_config_post_handler(httpd_req_t *request)
     }
 
     
-    nvs_write_wifi_data(target_ssid, target_pass) //Save Wifi credentials to NVS
+    nvs_write_wifi_data(target_ssid, target_pass); //Save Wifi credentials to NVS
     ESP_LOGI(TAG, "New Wi-Fi Profile Inbound! SSID: %s and saved to NVS", target_ssid);
 
     // Send response statement back to UI context before shifting physical adapters

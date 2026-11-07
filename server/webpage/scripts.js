@@ -2,7 +2,7 @@
 const AUTH_CONFIG = { user: "ramadan", pass: "12345678" };
 
 function handleLogin(event) {
-    event.preventDefault();
+    if (event) event.preventDefault();
     const user = document.getElementById("username").value;
     const pass = document.getElementById("password").value;
     const errorDiv = document.getElementById("auth-error");

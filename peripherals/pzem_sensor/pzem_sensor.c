@@ -5,6 +5,7 @@
 #include "esp_log.h"
 #include "my_gpio.h"
 
+#include "meter_http_server.h"
 
 static const char *TAG = "PZEM_SENSOR";
 
@@ -162,15 +163,14 @@ esp_err_t random_pzem_reading(pzem_data_t *data) {
 
     // 1. Generate core physical values
     float volt = generate_random_num(220.0f, 245.0f);
-    float curr = generate_random_num(0.0f, 30.0f);
-    float pf   = generate_random_num(0.6f, 0.98f); // Real world loads rarely hit absolute 0.0
+    float curr = (power_state) ? generate_random_num(15.0f, 30.0f) : 0.00f;
+    float pf   = generate_random_num(0.75f, 0.99f); // Real world loads rarely hit absolute 0.0
     float freq = generate_random_num(49.5f, 50.5f); // Assuming standard 50Hz grid
 
     // 2. Calculate physically consistent Active Power (Watts)
     float active_power = volt * curr * pf;
 
     // 3. Simulate Active Energy Accumulation (Wh or kWh depending on your struct)
-    // Assuming this function runs roughly once every few seconds, we slowly tick up energy
     float simulated_time_hours = 2.0f / 3600.0f; // Simulating 2 seconds passing
     float generated_wh = active_power * simulated_time_hours;
     simulated_energy_kwh += (generated_wh / 1000.0f); // Convert Wh to kWh

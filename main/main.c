@@ -47,9 +47,6 @@ void energy_sensor_task(void *pvParameters) {
 
 // 2. Hardware Relay Protection Safety Interlock Task
 void power_task(void *pvParameters) {
-    // Configure relay output pin parameters
-    gpio_reset_pin(MAIN_POWER_RELAY);
-    gpio_set_direction(MAIN_POWER_RELAY, GPIO_MODE_OUTPUT);
 
     while (1) {
         // Auto-trip power cut if balance hits critical threshold
@@ -71,7 +68,7 @@ void power_task(void *pvParameters) {
 void low_credit_task(void *pvParameters) {
     while (1) {
         // Safe check for absolute low balance conditions
-        if (credit_balance <= 100.0f && credit_balance > 3.0f) {
+        if (credit_balance <= 20.0f && credit_balance > 3.0f) {
             ESP_LOGW(TAG, "Low Credit Alert! Remaining Balance: ₦%.2f", credit_balance);
             // Optional: Toggle a low-credit alert LED pin or beeper sequence here
         }

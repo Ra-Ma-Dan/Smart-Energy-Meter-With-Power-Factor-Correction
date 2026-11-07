@@ -107,22 +107,32 @@ void my_wifi_init(void)
         },
     };
 
-    // Attempt to pull runtime connection credentials from persistent NVS profile storage
     wifi_config_t wifi_sta_cfg = {0};
     char stored_ssid[32] = {0};
     char stored_pass[64] = {0};
     size_t ssid_sz = sizeof(stored_ssid);
     size_t pass_sz = sizeof(stored_pass);
+    
+    // Attempt to pull runtime connection credentials from persistent NVS profile storage
 
+    esp_err_t read_status = nvs_read_wifi_data(stored_ssid, ssid_sz, stored_pass, pass_sz);
 
-    void nvs_read_data(stored_ssid, ssid_sz, stored_pass, pass_sz);
-    if(ssid_sz > 0 && pass_sz > 0){
+    if(read_status == ESP_OK){
+
         strncpy((char*)wifi_sta_cfg.sta.ssid, stored_ssid, sizeof(wifi_sta_cfg.sta.ssid));
         strncpy((char*)wifi_sta_cfg.sta.password, stored_pass, sizeof(wifi_sta_cfg.sta.password));
         ESP_LOGI(STA_TAG, "Found stored Wi-Fi credentials in flash memory for SSID: %s", stored_ssid);
-    }else{
-        wifi_sta_cfg.sta.ssid = CONFIG_TARGET_WIFI_SSID;
-        wifi_sta_cfg.sta.password = CONFIG_TARGET_WIFI_PASS;
+
+    } else {
+
+        wifi_sta_cfg = (wifi_config_t){
+            .sta = {
+                .ssid = CONFIG_TARGET_WIFI_SSID,
+                .password = CONFIG_TARGET_WIFI_PASS,
+            },
+        };
+
+        ESP_LOGI(STA_TAG, "Using Default credentials in config");
     }
   
       
