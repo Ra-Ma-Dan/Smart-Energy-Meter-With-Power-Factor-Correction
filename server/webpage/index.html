@@ -14,7 +14,7 @@
       <div class="auth-icon">⚡</div>
       <h2>Smart Meter Access</h2>
       <p>Enter your credentials to view dashboard</p>
-      <form id="login-form" onsubmit="handleLogin(event)">
+      <form id="login-form" onsubmit="return handleLogin(event)">
         <div class="input-group">
           <label for="username">Username</label>
           <input type="text" id="username" required autocomplete="off">
@@ -138,6 +138,24 @@
         <button class="btn-submit-charge" onclick="submitRecharge()">OK</button>
       </div>
     </div>
+  </div>
+
+
+  <!-- ⚙️ Wi-Fi Provisioning Configuration Section -->
+  <div class="card configuration-card">
+      <h3>📡 Station Wi-Fi Configuration</h3>
+      <form id="wifi-form" onsubmit="submitWifiCredentials(event)">
+          <div class="form-group">
+              <label for="wifi-ssid">Network Name (SSID):</label>
+              <input type="text" id="wifi-ssid" placeholder="Enter target SSID" required>
+          </div>
+          <div class="form-group">
+              <label for="wifi-pass">Password:</label>
+              <input type="password" id="wifi-pass" placeholder="Enter network password">
+          </div>
+          <button type="submit" class="btn-tactile wifi-submit-btn">Apply & Connect</button>
+      </form>
+      <div id="wifi-status-message" class="status-msg" style="display: none;"></div>
   </div>
 
   <script src="scripts.js"></script>

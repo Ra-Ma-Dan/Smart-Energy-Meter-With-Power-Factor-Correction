@@ -7,7 +7,8 @@
 
 #include "meter_http_server.h"
 #include "my_gpio.h"
-
+#include "my_nvs.h"
+#include "my_wifi.h"
 
 static const char *TAG = "HTTP_SERVER";
 
@@ -155,6 +156,66 @@ static esp_err_t reset_post_handler(httpd_req_t *request)
     }
 }
 
+// 📡 NEW: Runtime Station Configuration URI Post Handler
+static esp_err_t wifi_config_post_handler(httpd_req_t *request)
+{
+    char content[128];
+    int ret, received = 0;
+    int total_len = request->content_len;
+
+    if (total_len >= sizeof(content)) {
+        httpd_resp_send_err(request, HTTPD_400_BAD_REQUEST, "Payload too large");
+        return ESP_FAIL;
+    }
+
+    // Read inbound raw JSON configuration payload
+    while (received < total_len) {
+        ret = httpd_req_recv(request, content + received, total_len - received);
+        if (ret <= 0) {
+            if (ret == HTTPD_SOCK_ERR_TIMEOUT) continue;
+            return ESP_FAIL;
+        }
+        received += ret;
+    }
+    content[received] = '\0';
+
+    char target_ssid[32] = {0};
+    char target_pass[64] = {0};
+
+    // Compact JSON key lookup parsing expressions
+    char *ssid_ptr = strstr(content, "\"ssid\":\"");
+    char *pass_ptr = strstr(content, "\"password\":\"");
+
+    if (ssid_ptr) {
+        ssid_ptr += 8; // Offset past key label length
+        char *end = strchr(ssid_ptr, '"');
+        if (end) strncpy(target_ssid, ssid_ptr, end - ssid_ptr);
+    }
+    if (pass_ptr) {
+        pass_ptr += 12; // Offset past key label length
+        char *end = strchr(pass_ptr, '"');
+        if (end) strncpy(target_pass, pass_ptr, end - pass_ptr);
+    }
+
+    if (strlen(target_ssid) == 0) {
+        httpd_resp_send_err(request, HTTPD_400_BAD_REQUEST, "Missing target SSID token");
+        return ESP_FAIL;
+    }
+
+    
+    nvs_write_wifi_data(target_ssid, target_pass) //Save Wifi credentials to NVS
+    ESP_LOGI(TAG, "New Wi-Fi Profile Inbound! SSID: %s and saved to NVS", target_ssid);
+
+    // Send response statement back to UI context before shifting physical adapters
+    httpd_resp_set_status(request, "200 OK");
+    httpd_resp_send(request, "Credentials Saved. Connecting...", HTTPD_RESP_USE_STRLEN);
+
+    // Call dynamic background task reconnect sequence
+    wifi_connect_to_new_station(target_ssid, target_pass);
+
+    return ESP_OK;
+}
+
 
 // Register URI Paths
 static const httpd_uri_t root_uri = { 
@@ -183,21 +244,32 @@ static const httpd_uri_t reset_uri = {
     .handler = reset_post_handler 
 };
 static const httpd_uri_t credit_recgarge_uri = { 
-    .uri = "/api/recharge?amount=${amount}", 
+    .uri = "/api/recharge", 
+    .method = HTTP_POST, 
+    .handler = recharge_post_handler
+};
+
+static const httpd_uri_t power_control_uri = { 
+    .uri = "/api/power", 
     .method = HTTP_POST, 
     .handler = power_post_handler 
 };
 
-static const httpd_uri_t power_control_uri = { 
-    .uri = "/api/power?state=${state}", 
+// New Configuration registration token 
+static const httpd_uri_t wifi_config_uri = { 
+    .uri = "/api/wifi/config", 
     .method = HTTP_POST, 
-    .handler = recharge_post_handler 
+    .handler = wifi_config_post_handler 
 };
 
 void start_webserver(void) {
     httpd_handle_t server = NULL;
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     config.server_port = CONFIG_HTTPD_WEB_PORT; // Pulls from your Kconfig file!
+    
+    if (server != NULL) {
+        return; // Prevent duplicate instantiation instances
+    }
 
     ESP_LOGI(TAG, "Starting server on port: '%d'", config.server_port);
     if (httpd_start(&server, &config) == ESP_OK) {
@@ -208,5 +280,7 @@ void start_webserver(void) {
         httpd_register_uri_handler(server, &reset_uri);
         httpd_register_uri_handler(server, &credit_recgarge_uri);
         httpd_register_uri_handler(server, &power_control_uri);
+        httpd_register_uri_handler(server, &wifi_config_uri); // Added new provisioning endpoint
     }
 }
+

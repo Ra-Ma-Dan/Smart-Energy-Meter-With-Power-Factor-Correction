@@ -34,13 +34,20 @@ void my_i2c_init(){
 }
 
 void i2c_send(const uint8_t *data, size_t data_len, int timeout){
-    // Explicitly casting 'data' from (const int8_t*) to (const uint8_t*) to fix signedness
-    esp_err_t res = i2c_master_transmit(dev_handle, (const uint8_t *)data, data_len, timeout);
-    if(res != ESP_OK){
-        ESP_LOGI(TAG, "Failed to transmit");
-        abort();
+    // 🚀 SAFETY CHECK: Drop invalid lengths or null pointers immediately
+    if (data == NULL || data_len == 0) {
+        ESP_LOGW(TAG, "I2C Send dropped: Data is NULL or length is 0");
+        return; 
     }
+
+    //esp_err_t res = 
+    i2c_master_transmit(dev_handle, (const uint8_t *)data, data_len, timeout);
+    // if(res != ESP_OK){
+    //     ESP_LOGE(TAG, "Failed to transmit I2C data! Error code: 0x%X", res);
+    // }
 }
+
+
 
 void i2c_send_recieve(const int8_t *data, size_t data_len, int8_t *buffer, size_t buff_len, int timeout){
     // 1. Removed 'const' from 'int8_t *buffer' in the function arguments above

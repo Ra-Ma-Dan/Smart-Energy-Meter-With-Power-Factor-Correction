@@ -2,3 +2,8 @@
 version = 1
 firmware = 'build/flasher_args.json'
 elf = 'build/New_PFC_Energy_Meter.elf'
+
+
+[[net.forward]]
+from = "localhost:8080"
+to = "target:80"

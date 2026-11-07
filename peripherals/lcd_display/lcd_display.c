@@ -77,7 +77,8 @@ void send_word(const char *word){
 
 void lcd_display_task(void *pvParameters) {
     init_lcd_display();
-    last_activity_time = xTaskCheckForTimeOut(NULL, NULL); // Initialize timer
+    last_activity_time = xTaskGetTickCount() * portTICK_PERIOD_MS;
+    //last_activity_time = xTaskCheckForTimeOut(NULL, NULL); // Initialize timer
     
     uint8_t display_page = 0;
     uint32_t last_rotation_time = 0;

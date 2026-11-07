@@ -354,8 +354,6 @@ body {
   background: #22c55e;
 }
 
-
-
 .bank-monitor-card {
   grid-column: span 3; /* Stretch across the dashboard layout */
 }
@@ -384,11 +382,87 @@ body {
   color: #00e5ff !important;
   box-shadow: 0 0 12px rgba(0, 229, 255, 0.3);
 }
-@media (max-width: 600px) {
-  .bank-monitor-card { grid-column: span 1; }
-  .indicators-grid { grid-template-columns: 1fr; }
+
+/* ==========================================================================
+   ADDED SYSTEM PROVISIONING STYLES (WI-FI SETTINGS OVERLAY)
+   ========================================================================== */
+.configuration-card {
+  grid-column: span 3;
+  background-color: #141a24;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #222b3c;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  margin-top: 15px;
+  box-sizing: border-box;
 }
 
+.configuration-card h3 {
+  margin: 0 0 20px 0;
+  font-size: 1.1rem;
+  color: #3b9cfd;
+  letter-spacing: 0.5px;
+}
+
+#wifi-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr) auto;
+  gap: 20px;
+  align-items: flex-end;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #a0aec0;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.form-group input {
+  padding: 12px;
+  background-color: #0f131a;
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  border-color: #3b9cfd;
+}
+
+.wifi-submit-btn {
+  background-color: #3b9cfd;
+  border: none;
+  color: white;
+  height: 46px;
+  padding: 0 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #2582df;
+}
+
+.wifi-submit-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 transparent;
+}
+
+.status-msg {
+  font-size: 0.9rem;
+  margin-top: 15px;
+  font-weight: 500;
+}
 
 /* ==========================================================================
    DYNAMIC BREAKPOINTS FOR MOBILE & TABLET LAYOUTS
@@ -412,6 +486,15 @@ body {
   
   .header h1 {
     font-size: 1.9rem;
+  }
+
+  #wifi-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .wifi-submit-btn {
+    grid-column: span 2;
+    width: 100%;
   }
 }
 
@@ -452,19 +535,26 @@ body {
     gap: 12px;
     margin: 1.5em 0;
   }
-
   .btns button {
     height: 55px;
     font-size: 15px;
   }
-
   /* Shrinks authentication form card slightly for small mobile screens */
   .auth-card {
     padding: 25px 20px;
   }
+  .bank-monitor-card { grid-column: span 1; }
+  .indicators-grid { grid-template-columns: 1fr; }
+    /* Collapse Provisioning Card into clean vertical stacks */
+  .configuration-card { grid-column: span 1; }
+  #wifi-form {
+    grid-template-columns: 1fr;
+  }
+  .wifi-submit-btn {
+    grid-column: span 1;
+  }
 }
-
-/* 📱 BREAKPOINT 3: Micro Devices (Very narrow legacy or budget screens under 360px wide) */
+  /* 📱 BREAKPOINT 3: Micro Devices (Very narrow legacy or budget screens under 360px wide) */
 @media (max-width: 360px) {
   .param_value {
     font-size: 1.7rem;

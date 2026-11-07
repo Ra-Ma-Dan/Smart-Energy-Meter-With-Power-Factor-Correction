@@ -9,7 +9,7 @@
 #define WIFI_DISCONNECTED_BIT  BIT1
 #define AP_WIFI_AUTHMODE       WIFI_AUTH_WPA2_PSK
 #define STA_SCAN_METHOD        WIFI_ALL_CHANNEL_SCAN
-#define MAX_RETRY              8
+#define MAX_RETRY              8 
 #define STA_CHANNEL            0
 
 // extern avoids compilation errors if included in multiple .c source files
@@ -17,6 +17,6 @@ extern int num_dev_connected;
 extern EventGroupHandle_t wifi_enent_handle;
 
 void my_wifi_init(void);
-
+void wifi_connect_to_new_station(const char *ssid, const char *password);
 
 #endif // MY_WIFI_H

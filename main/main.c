@@ -126,7 +126,7 @@ void app_main(void)
     xTaskCreatePinnedToCore(power_task, "Powering_ON_OFF_Task", 4096, NULL, 5, NULL, 1);
     xTaskCreatePinnedToCore(recharge_task, "Recharging_task", 4096, NULL, 4, NULL, 1);
     xTaskCreatePinnedToCore(low_credit_task, "Low Credit Task", 2048, NULL, 4, NULL, 0);
-    //xTaskCreatePinnedToCore(lcd_display_task, "LCD_DISPLAY_TASK", 4096, NULL, 6, NULL, 0);
+    xTaskCreatePinnedToCore(lcd_display_task, "LCD_DISPLAY_TASK", 4096, NULL, 6, NULL, 0);
      
     while(1){
 
